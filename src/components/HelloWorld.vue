@@ -31,12 +31,22 @@
 </template>
 
 <script>
+// 引 node_modules 中的组件，什么都不要加
+import axios from 'axios'
+
 export default {
   name: 'HelloWorld',
   props: {
     msg: String
+  },
+  // 加载成功，主动调用
+  mounted(){
+    axios.get("/xxx").then(res => {
+      console.log(res)
+    })
   }
 }
+
 </script>
 
 <!-- Add "scoped" attribute to limit CSS to this component only -->
