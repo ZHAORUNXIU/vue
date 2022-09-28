@@ -20,4 +20,7 @@ const store = createStore({
     }
   })
 
+  // 每个应用仅包含一个 store 实例
+  // Vuex 通过 Vue 插件系统，将 store 实例从根组件诸如发哦所有的子组件中
+  // 不需要频繁的 import
   export default store
