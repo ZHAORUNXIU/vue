@@ -9,7 +9,11 @@
   <span>这里直接访问 store.state.count:{{ $store.state.count }}</span><br>
   <span>这里使用计算属性访问 store.state.count:{{ $store.state.count }}</span><br>
   <span>这里使用mapState访问 store.state.count:{{ count }}-----name:{{ name }}</span><br>
-  <button @click="plus">Plus</button>
+  <button @click="increment">Plus</button><br>
+  <button @click="plus10">Plus10</button><br>
+  <button @click="plus20">Plus20</button><br>
+  <span>查看今天完成了多少个日程:{{ doneCount }}</span><br>
+  <span>查看double结果:{{ doneCountDouble }}</span><br>
   <p>
     <!--使用 router-link 组件进行导航 -->
     <!--通过传递 `to` 来指定链接 -->
@@ -31,7 +35,8 @@
 </template>
 
 <script>
-import { mapState } from 'vuex'
+import { mapState,mapGetters,mapActions } from 'vuex'
+import { INCREMENT_OBJ } from '@/store/mutation-types.js'
 // import HelloWorld from './components/HelloWorld.vue'
 
 export default {
@@ -46,21 +51,42 @@ export default {
       this.$router.push({path: '/'})
     },3000)
   },
+  data () {
+    return{
+      num:0
+    }
+  },
   methods:{
     plus() {
       // this.$store.state.count++;
-      this.$store.commit('increment')
-    }
+      // this.$store.commit('increment')
+      // 改调用store的actions方法：分发Action
+      this.$store.dispatch('increment')
+    },
+    // 需要携带附加参数
+    plus10() {
+      this.$store.commit('incrementN',10)
+    },
+    // 如果对象的方式传递参数，即 incrementObj (state,obj){}，则需要对象的方式commit
+    plus20() {
+      // this.$store.commit({type:'incrementObj',n:20})
+      // 改用 INCREMENT_OBJ 变量替代 'incrementObj'
+      this.$store.commit({type: INCREMENT_OBJ,n:20})
+    },
+    ...mapActions(['increment'])
   },
-  // 计算属性时方法
-  computed: 
-  // {
+  // 计算属性是方法
+  // 注意：计算属性不能对属性值进行赋值、修改，只能依赖这个属性值得到另一个值
+  computed: {
+    // 使用...对象展运算符，将mapstate返回的对象和局部计算属性合并
+    myNum() {
+      return this.num+10
+    },
   //   count() {
   //      return this.$store.state.count
   //    }
-  // }
-   // 使用 mapRtate辅助函数生成计算属性
-   mapState(
+   // 使用 mapState辅助函数生成计算属性
+   ...mapState(
     // {
     // count: state => state.count,
     // 等同于
@@ -68,7 +94,19 @@ export default {
     // }
     // 解构方式：
     ['count','name']
-   )
+   ),
+  //  doneCount() {
+  //     return this.$store.state.todos.filter(todo=>todo.done===true).length
+  //   }
+  // 如果多个组件需要用到此计算属性，需要复制，不够理想，此处移动到store的getter对象中（全局可用）
+  // 用计算属性访问store的getter属性，方法类似state
+  // 方法一：直接调用
+  // doneCount(){
+  //   return this.$store.getters.doneCount
+  // }
+  // 方法二：使用 mapGetters辅助函数生成计算属性
+  ...mapGetters(['doneCount','doneCountDouble'])
+  }
 }
 </script>
 
