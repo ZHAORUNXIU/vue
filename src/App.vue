@@ -7,7 +7,7 @@
 <template>
   <h1>Hello App!</h1>
   <span>这里直接访问 store.state.count:{{ $store.state.count }}</span><br>
-  <span>这里使用计算属性访问 store.state.count:{{ $store.state.count }}</span><br>
+  <span>这里使用计算属性访问 store.state.count:{{ count }}</span><br>
   <span>这里使用mapState访问 store.state.count:{{ count }}-----name:{{ name }}</span><br>
   <button @click="increment">Plus</button><br>
   <button @click="plus10">Plus10</button><br>
@@ -32,17 +32,28 @@
   <!-- 预留，挖出的坑 -->
   <router-view name="LeftSidebar"></router-view>
   <router-view></router-view>
+  <br>
+  <span>这里获取setup中number的值: {{ number }}---<input v-model="number"></span>
 </template>
 
 <script>
 import { mapState,mapGetters,mapActions } from 'vuex'
 import { INCREMENT_OBJ } from '@/store/mutation-types.js'
 // import HelloWorld from './components/HelloWorld.vue'
+import { ref } from 'vue'
 
 export default {
   name: 'App',
   components: {
 //  HelloWorld,   
+  },
+  // setup 响应式API，集中处理共同主题的内容，并暴露，不需要再 data 中再次暴露
+  // 可以理解为，提取了一部分代码到 setup 当中
+  setup() {
+    //此处非响应式
+    // return { number: 2 }
+    let number = ref(2)
+    return { number }
   },
   mounted() {
     // 调用$需要this，但是<template>模块中调用，不需要this
